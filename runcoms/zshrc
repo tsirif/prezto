@@ -3,6 +3,7 @@
 #
 # Authors:
 #   Sorin Ionescu <sorin.ionescu@gmail.com>
+#   Christos Tsirigotis <tsirif@gmail.com>
 #
 
 # Source Prezto.
@@ -10,4 +11,124 @@ if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
   source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
 fi
 
-# Customize to your needs...
+#
+# Arch Linux flags
+#
+
+export ARCHFLAGS="-march=haswell -mabm -O2 -pipe"
+export GNUPGHOME=$HOME/.gnupg
+export AURDEST="/home/case/aur"
+
+#
+# SSH
+#
+
+if [ -n "$DESKTOP_SESSION" ];then
+    eval $(gnome-keyring-daemon --start --daemonize)
+    export SSH_AUTH_SOCK
+fi
+
+#
+# Paths
+#
+
+# Python
+export WORKON_HOME=$HOME/.virtualenvs
+export PROJECT_HOME=$HOME/Development
+source /usr/bin/virtualenvwrapper.sh
+# export VIRTUALENVWRAPPER_VIRTUALENV_ARGS='--no-site-packages'
+
+# Ruby
+export PATH=/home/tsirif/.gem/ruby/2.3.0/bin:$PATH
+
+# Intel
+workwith_intel() {
+  emulate sh -c 'source /home/intel/bin/compilervars.sh intel64'
+  # export LD_LIBRARY_PATH=/home/intel/compilers_and_libraries_2016/linux/mkl/lib/intel64/:/home/intel/compilers_and_libraries_2016/linux/lib/intel64:$LD_LIBRARY_PATH
+  export LD_RUN_PATH=/home/intel/compilers_and_libraries_2016/linux/mkl/lib/intel64/:/home/intel/compilers_and_libraries_2016/linux/lib/intel64:$LD_RUN_PATH
+}
+
+workwith_intel
+
+
+# ROS
+workwith_indigo() {
+  source /opt/ros/indigo/setup.zsh
+  export PYTHONPATH=/opt/ros/indigo/lib/python2.7/site-packages:$PYTHONPATH
+  export PKG_CONFIG_PATH="/opt/ros/indigo/lib/pkgconfig:$PKG_CONFIG_PATH"
+  # Optionally, you can set:
+  #export ROS_PACKAGE_PATH=/path/to/your/package/path:$ROS_PACKAGE_PATH
+
+  # Useful aliases
+  alias catkin_make="catkin_make -DPYTHON_EXECUTABLE=/usr/bin/python2 -DPYTHON_INCLUDE_DIR=/usr/include/python2.7 -DPYTHON_LIBRARY=/usr/lib/libpython2.7.so"
+
+  # setting default ROS_MASTER_URI
+  export ROS_IP=`hostname -i`
+  export ROS_MASTER_URI=http://localhost:11311
+
+  # If you use Gazebo:
+  source /usr/share/gazebo/setup.sh
+}
+
+# workwith_indigo
+
+# CUDA
+# export PATH=/opt/cuda/bin:$PATH
+export LD_LIBRARY_PATH=/opt/cuda/lib64:$LD_LIBRARY_PATH
+
+# case/local
+export PATH=/home/case/local/bin:$PATH
+export LD_LIBRARY_PATH=/home/case/local/lib:/home/case/local/lib64:$LD_LIBRARY_PATH
+export LIBRARY_PATH=/home/case/local/lib:/home/case/local/lib64:$LIBRARY_PATH
+export CPATH=/home/case/local/include:$CPATH
+
+#
+# Scripts
+#
+
+# YCM build script
+ycm_install() {
+  # cd ~
+  # mkdir ycm_build
+  # cd ycm_build
+  # cmake -G "Unix Makefiles" -DEXTERNAL_LIBCLANG_PATH=/usr/lib/libclang.so -DUSE_SYSTEM_BOOST=ON . ~/.vim/bundle/YouCompleteMe/third_party/ycmd/cpp
+  # cmake --build . --target ycm_core
+  # cd ~
+  # rm -rf ycm_build
+  cd ~/.vim/bundle/YouCompleteMe
+  python3 ./install.py --clang-completer
+  cd ~
+}
+
+#
+# Aliases
+#
+
+alias vless='/usr/share/vim/vim74/macros/less.sh'
+alias activate='source /home/case/local/bin/activate'
+alias restart='shutdown -r now'
+alias equalizer='qpaeq'
+
+alias master_local='export ROS_MASTER_URI=http://localhost:11311'
+alias master_robot='export ROS_MASTER_URI=http://pandora-gears:11311'
+alias master_lab='export ROS_MASTER_URI=http://pandora-lab:11311'
+
+alias compiler_gcc='export CC=gcc && export CXX=g++'
+alias compiler_clang='export CC=clang && export CXX=clang++'
+alias compiler_intel='export CC=icc && export CXX=icpc'
+
+compiler_gcc
+
+alias tar-gz='tar czf'
+alias tar-bz2='tar cjf'
+
+alias untar-gz='tar xzf'
+alias untar-bz2='tar xjf'
+
+alias regvim='gvim --remote-silent'
+alias vimr='vim --remote-silent'
+
+alias rosdep-install='rosdep install --from-paths src --ignore-src --rosdistro $ROS_DISTRO'
+
+alias workwith_theano='source ~/Development/Theano_ws/theano_devel/bin/activate'
+alias pipup='pip freeze --local | grep -v "^\-e" | cut -d = -f 1 | xargs pip install -U'
