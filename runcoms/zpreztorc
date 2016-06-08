@@ -39,8 +39,8 @@ zstyle ':prezto:load' pmodule \
   'fasd' \
   'git' \
   'history-substring-search' \
-  'pacman' \
-  'tmux'
+  # 'pacman' \
+  # 'tmux'
 
 #
 # Autosuggestions
@@ -91,7 +91,7 @@ zstyle ':prezto:module:editor' dot-expansion 'yes'
 #
 
 # Set the Pacman frontend.
-zstyle ':prezto:module:pacman' frontend 'pacaur'
+# zstyle ':prezto:module:pacman' frontend 'pacaur'
 
 #
 # Prompt
@@ -164,10 +164,10 @@ zstyle ':prezto:module:syntax-highlighting' highlighters \
 #
 
 # Auto start a session when Zsh is launched in a local terminal.
-zstyle ':prezto:module:tmux:auto-start' local 'yes'
+# zstyle ':prezto:module:tmux:auto-start' local 'yes'
 
 # Auto start a session when Zsh is launched in a SSH connection.
-zstyle ':prezto:module:tmux:auto-start' remote 'yes'
+# zstyle ':prezto:module:tmux:auto-start' remote 'yes'
 
 # Integrate with iTerm2.
-zstyle ':prezto:module:tmux:iterm' integrate 'yes'
+# zstyle ':prezto:module:tmux:iterm' integrate 'yes'
