@@ -6,14 +6,16 @@
 #   Christos Tsirigotis <tsirif@gmail.com>
 #
 
-# Source Prezto.
-if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
-  source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
-fi
+. ~/.profile
 
 # Load fbastien's config
 if [ -e "/Tmp/lisa/os_v5/.local.bashrc" ]; then
   source /Tmp/lisa/os_v5/.local.bashrc
+fi
+
+# Source Prezto.
+if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
+  source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
 fi
 
 #

@@ -16,8 +16,8 @@ fi
 #
 # Terminal
 #
-export TERMINAL=terminator
-export TERM='screen-256color'
+# export TERMINAL=terminator
+# export TERM='screen-256color'
 
 #
 # Editors
