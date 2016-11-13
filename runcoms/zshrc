@@ -44,11 +44,10 @@ export PATH=/home/tsirif/.gem/ruby/2.3.0/bin:$PATH
 # Intel
 workwith_intel() {
   emulate sh -c 'source /home/intel/bin/compilervars.sh intel64'
-  # export LD_LIBRARY_PATH=/home/intel/compilers_and_libraries_2016/linux/mkl/lib/intel64/:/home/intel/compilers_and_libraries_2016/linux/lib/intel64:$LD_LIBRARY_PATH
   export LD_RUN_PATH=/home/intel/compilers_and_libraries_2016/linux/mkl/lib/intel64/:/home/intel/compilers_and_libraries_2016/linux/lib/intel64:$LD_RUN_PATH
 }
 
-workwith_intel
+# workwith_intel
 
 
 # ROS
@@ -75,6 +74,7 @@ workwith_indigo() {
 # CUDA
 # export PATH=/opt/cuda/bin:$PATH
 export LD_LIBRARY_PATH=/opt/cuda/lib64:$LD_LIBRARY_PATH
+export CUDA_PATH=/opt/cuda
 
 # case/local
 export PATH=/home/case/local/bin:$PATH
@@ -105,7 +105,6 @@ ycm_install() {
 #
 
 alias vless='/usr/share/vim/vim74/macros/less.sh'
-alias activate='source /home/case/local/bin/activate'
 alias restart='shutdown -r now'
 alias equalizer='qpaeq'
 
@@ -113,9 +112,9 @@ alias master_local='export ROS_MASTER_URI=http://localhost:11311'
 alias master_robot='export ROS_MASTER_URI=http://pandora-gears:11311'
 alias master_lab='export ROS_MASTER_URI=http://pandora-lab:11311'
 
-alias compiler_gcc='export CC=gcc && export CXX=g++'
-alias compiler_clang='export CC=clang && export CXX=clang++'
-alias compiler_intel='export CC=icc && export CXX=icpc'
+alias compiler_gcc='export ASM=gcc && export CC=gcc && export CXX=g++'
+alias compiler_clang='export ASM=clang && export CC=clang && export CXX=clang++'
+alias compiler_intel='export ASM=icc && export CC=icc && export CXX=icpc'
 
 compiler_gcc
 
@@ -130,5 +129,5 @@ alias vimr='vim --remote-silent'
 
 alias rosdep-install='rosdep install --from-paths src --ignore-src --rosdistro $ROS_DISTRO'
 
-alias workwith_theano='source ~/Development/Theano_ws/theano_devel/bin/activate'
 alias pipup='pip freeze --local | grep -v "^\-e" | cut -d = -f 1 | xargs pip install -U'
+alias remove-orphans='pacman -Rns $(pacman -Qtdq)'

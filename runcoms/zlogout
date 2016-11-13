@@ -6,8 +6,9 @@
 #
 
 # Print the message.
-cat <<-EOF
-
-Thank you. Come again!
-  -- Dr. Apu Nahasapeemapetilon
-EOF
+if (( $+commands[fortune] )); then
+  if [[ -t 0 || -t 1 ]]; then
+    fortune -a -c -w
+    print
+  fi
+fi
