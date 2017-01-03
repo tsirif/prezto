@@ -1,0 +1,128 @@
+#
+# A colorful, friendly, multiline theme with some handy features.
+#
+# Authors:
+#   Christos Tsirigotis <tsirif@gmail.com>
+#   Paul Gideon Dann <pdgiddie@gmail.com>
+#   Sorin Ionescu <sorin.ionescu@gmail.com>
+#
+# Features:
+#   - Simple VCS branch, staged, and unstaged indication.
+#   - Diplays history difference of a local branch and its remote in git.
+#   - Prompt character is different in a VCS repository.
+#   - Last command exit status is displayed when non-zero.
+#
+# Screenshots:
+#   http://i.imgur.com/rCo3S.png
+#
+
+function +vi-set_novcs_prompt_symbol {
+  _prompt_tsiriee_symbol='}'
+  _gittrackdiff=''
+}
+
+function +vi-set_vcs_prompt_symbol {
+  git branch >/dev/null 2>/dev/null && _prompt_tsiriee_symbol='±' && return
+  hg root >/dev/null 2>/dev/null && _prompt_tsiriee_symbol='☿' && return
+  svn info >/dev/null 2>/dev/null && _prompt_tsiriee_symbol='⚡' && return
+}
+
+function +vi-git_precmd {
+  if [[ -n $(git ls-files --other --exclude-standard 2> /dev/null) ]]; then
+    hook_com[misc]+='%F{green}?%f'
+  fi
+
+  local stashes
+  stashes=$(git stash list 2>/dev/null | wc -l)
+  if (( stashes > 0 )); then
+    hook_com[misc]+="%F{green}*${stashes}%f"
+  fi
+
+  local remote_cmd ahead_and_behind_cmd ahead_and_behind
+  local remote ahead behind
+  if [[ -n ${hook_com[branch]} ]]; then
+    # Are we on a remote-tracking branch?
+    remote_cmd='git rev-parse --symbolic-full-name --verify HEAD@{upstream}'
+    remote="${$(${(z)remote_cmd} 2> /dev/null)##refs/remotes/}"
+    if [[ -n "$remote" ]]; then
+      # Gets the commit difference counts between local and remote.
+      ahead_and_behind_cmd='git rev-list --count --left-right HEAD...@{upstream}'
+      # Get ahead and behind counts.
+      ahead_and_behind="$(${(z)ahead_and_behind_cmd} 2> /dev/null)"
+      ahead="$ahead_and_behind[(w)1]"
+      if (( ahead > 0)); then
+        ahead="%F{28}+${ahead}%F{244}"
+      else
+        ahead=''
+      fi
+      behind="$ahead_and_behind[(w)2]"
+      if (( behind > 0)); then
+        behind="%F{88}-${behind}%F{244}"
+      else
+        behind=''
+      fi
+      if [[ -n "$ahead" || -n "$behind" ]]; then
+        _gittrackdiff="%F{244}[${remote} ${ahead}${behind}]%f"
+      else
+        _gittrackdiff="%F{244}[${remote} =]%f"
+      fi
+    fi
+  fi
+}
+
+function prompt_tsiriee_precmd {
+  # Replace '/home/<user>' with '~'.
+  _prompt_tsiriee_pwd="${PWD/#$HOME/~}"
+  vcs_info
+}
+
+function prompt_tsiriee_setup {
+  setopt LOCAL_OPTIONS
+  unsetopt XTRACE KSH_ARRAYS
+  prompt_opts=(cr percent subst)
+
+  # Load required functions.
+  autoload -Uz vcs_info
+  autoload -Uz add-zsh-hook
+
+  # Add hook to set up prompt parameters before each command.
+  add-zsh-hook precmd prompt_tsiriee_precmd
+
+  # Set editor-info parameters.
+  zstyle ':prezto:module:editor:info:completing' format '%F{green}...%f'
+  zstyle ':prezto:module:editor:info:keymap:alternate' format ' %F{yellow}--- COMMAND ---%f'
+
+  # Git specific parameters.
+  # zstyle ':prezto:module:git:info:ahead' format '%F{28}+%A%f'
+  # zstyle ':prezto:module:git:info:behind' format '%F{88}-%B%f'
+  # zstyle ':prezto:module:git:info:remote' format '%R'
+  # zstyle ':prezto:module:git:info:stashed' format '%F{green}*%S%f'
+  # zstyle ':prezto:module:git:info:untracked' format '%F{green}?%f'
+  # zstyle ':prezto:module:git:info:keys' format \
+  #   'misc' '%u%S' 'ahead' '%A' 'behind' '%B' 'remote' '%R'
+
+  # Set vcs_info parameters.
+  zstyle ':vcs_info:*' enable git svn hg
+  zstyle ':vcs_info:*' check-for-changes true
+  zstyle ':vcs_info:*' formats ' on %F{magenta}%b%f%c%u%m'
+  zstyle ':vcs_info:*' actionformats ' on %F{magenta}%b%f%c%u%m %F{yellow}(%a)%f'
+  zstyle ':vcs_info:*' stagedstr '%F{green}+%f'
+  zstyle ':vcs_info:*' unstagedstr '%F{green}!%f'
+
+  # Set vcs_info hooks.
+  # NOTE: Prior to Zsh v4.3.12, there are no static hooks, no vcs_info_hookadd
+  #       function, and no 'no-vcs' hook.
+  zstyle ':vcs_info:*+start-up:*' hooks set_novcs_prompt_symbol
+  local -x _gittrackdiff
+  zstyle ':vcs_info:git*+set-message:*' hooks set_vcs_prompt_symbol git_precmd
+  zstyle ':vcs_info:*+set-message:*' hooks set_vcs_prompt_symbol
+
+  # Define prompts.
+  PROMPT='%(?..%F{red}%B-> [%?]%b%f
+)%F{magenta}%n%f@%F{yellow}%m%f|%F{green}${_prompt_tsiriee_pwd}%f${vcs_info_msg_0_}
+%F{blue}${_prompt_tsiriee_symbol}%f '
+  RPROMPT='${_gittrackdiff}${editor_info[keymap]}'
+  SPROMPT='zsh: correct %F{magenta}%R%f to %F{green}%r%f [nyae]? '
+}
+
+prompt_tsiriee_setup "$@"
