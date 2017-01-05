@@ -79,7 +79,7 @@ export CUDA_PATH=/opt/cuda
 # case/local
 export PATH=/home/case/local/bin:$PATH
 export LD_LIBRARY_PATH=/home/case/local/lib:/home/case/local/lib64:$LD_LIBRARY_PATH
-export LIBRARY_PATH=/home/case/local/lib:/home/case/local/lib64:$LIBRARY_PATH
+# export LIBRARY_PATH=/home/case/local/lib:/home/case/local/lib64:$LIBRARY_PATH
 export CPATH=/home/case/local/include:$CPATH
 
 #

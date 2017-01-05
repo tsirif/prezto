@@ -6,9 +6,14 @@
 #
 
 # Print the message.
-if (( $+commands[fortune] )); then
-  if [[ -t 0 || -t 1 ]]; then
-    fortune -a -c -w
-    print
-  fi
-fi
+# if (( $+commands[fortune] )); then
+#   if [[ -t 0 || -t 1 ]]; then
+#     fortune -a -c -w
+#     print
+#   fi
+# fi
+cat <<-EOF
+
+Thank you. Come again!
+  -- Dr. Apu Nahasapeemapetilon
+EOF

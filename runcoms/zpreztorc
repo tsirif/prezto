@@ -16,7 +16,7 @@
 zstyle ':prezto:*:*' color 'yes'
 
 # Set the Zsh modules to load (man zshmodules).
-# zstyle ':prezto:load' zmodule 'attr' 'stat'
+# zstyle ':prezto:load' zmodule 'attr' 'stat' 'files'
 
 # Set the Zsh functions to load (man zshcontrib).
 # zstyle ':prezto:load' zfunction 'zargs' 'zmv'
@@ -32,15 +32,16 @@ zstyle ':prezto:load' pmodule \
   'directory' \
   'spectrum' \
   'utility' \
-  'completion' \
+  'git' \
+  'python' \
   'prompt' \
-  'autosuggestions' \
   'archive' \
   'fasd' \
-  'git' \
-  'history-substring-search' \
   'pacman' \
-  'tmux'
+  'tmux' \
+  'completion' \
+  'history-substring-search' \
+  'autosuggestions' \
 
 #
 # Autosuggestions
@@ -100,7 +101,7 @@ zstyle ':prezto:module:pacman' frontend 'pacaur'
 # Set the prompt theme to load.
 # Setting it to 'random' loads a random theme.
 # Auto set to 'off' on dumb terminals.
-zstyle ':prezto:module:prompt' theme 'giddie'
+zstyle ':prezto:module:prompt' theme 'tsiriee'
 
 #
 # Ruby
