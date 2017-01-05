@@ -17,25 +17,25 @@
 #
 
 function +vi-set_novcs_prompt_symbol {
-  _prompt_tsiriee_symbol='}'
+  _prompt_tsiriee_symbol='%F{cyan}❯%f'
   _gittrackdiff=''
 }
 
 function +vi-set_vcs_prompt_symbol {
-  git branch >/dev/null 2>/dev/null && _prompt_tsiriee_symbol='±' && return
-  hg root >/dev/null 2>/dev/null && _prompt_tsiriee_symbol='☿' && return
-  svn info >/dev/null 2>/dev/null && _prompt_tsiriee_symbol='⚡' && return
+  git branch >/dev/null 2>/dev/null && _prompt_tsiriee_symbol='%F{cyan}±%f' && return
+  hg root >/dev/null 2>/dev/null && _prompt_tsiriee_symbol='%F{cyan}☿%f' && return
+  svn info >/dev/null 2>/dev/null && _prompt_tsiriee_symbol='%F{cyan}⚡%f' && return
 }
 
 function +vi-git_precmd {
   if [[ -n $(git ls-files --other --exclude-standard 2> /dev/null) ]]; then
-    hook_com[misc]+='%F{green}?%f'
+    hook_com[misc]+='%F{69}%B◼%b%f'
   fi
 
   local stashes
   stashes=$(git stash list 2>/dev/null | wc -l)
   if (( stashes > 0 )); then
-    hook_com[misc]+="%F{green}*${stashes}%f"
+    hook_com[misc]+="%F{69}%B✭%b${stashes}%f"
   fi
 
   local remote_cmd ahead_and_behind_cmd ahead_and_behind
@@ -51,20 +51,20 @@ function +vi-git_precmd {
       ahead_and_behind="$(${(z)ahead_and_behind_cmd} 2> /dev/null)"
       ahead="$ahead_and_behind[(w)1]"
       if (( ahead > 0)); then
-        ahead="%F{28}+${ahead}%F{244}"
+        ahead="%F{10}%B⬆%b${ahead}%F{244}"
       else
         ahead=''
       fi
       behind="$ahead_and_behind[(w)2]"
       if (( behind > 0)); then
-        behind="%F{88}-${behind}%F{244}"
+        behind="%F{9}%B⬇%b${behind}%F{244}"
       else
         behind=''
       fi
       if [[ -n "$ahead" || -n "$behind" ]]; then
         _gittrackdiff="%F{244}[${remote} ${ahead}${behind}]%f"
       else
-        _gittrackdiff="%F{244}[${remote} =]%f"
+        _gittrackdiff="%F{244}[${remote} %B=%b]%f"
       fi
     fi
   fi
@@ -74,6 +74,12 @@ function prompt_tsiriee_precmd {
   # Replace '/home/<user>' with '~'.
   _prompt_tsiriee_pwd="${PWD/#$HOME/~}"
   vcs_info
+
+  if (( $+functions[python-info] )); then
+    python-info
+  fi
+
+  # print -Pn "$PROMPT"
 }
 
 function prompt_tsiriee_setup {
@@ -89,8 +95,10 @@ function prompt_tsiriee_setup {
   add-zsh-hook precmd prompt_tsiriee_precmd
 
   # Set editor-info parameters.
-  zstyle ':prezto:module:editor:info:completing' format '%F{green}...%f'
-  zstyle ':prezto:module:editor:info:keymap:alternate' format ' %F{yellow}--- COMMAND ---%f'
+  # zstyle ':prezto:module:editor:info:completing' format '%B%F{green}...%f%b'
+  zstyle ':prezto:module:editor:info:keymap:primary' format '_prompt_tsiriee_symbol'
+  zstyle ':prezto:module:editor:info:keymap:primary:overwrite' format '%F{green}♺%f'
+  zstyle ':prezto:module:editor:info:keymap:alternate' format '%F{magenta}❮%f'
 
   # Git specific parameters.
   # zstyle ':prezto:module:git:info:ahead' format '%F{28}+%A%f'
@@ -104,24 +112,27 @@ function prompt_tsiriee_setup {
   # Set vcs_info parameters.
   zstyle ':vcs_info:*' enable git svn hg
   zstyle ':vcs_info:*' check-for-changes true
-  zstyle ':vcs_info:*' formats ' on %F{magenta}%b%f%c%u%m'
-  zstyle ':vcs_info:*' actionformats ' on %F{magenta}%b%f%c%u%m %F{yellow}(%a)%f'
-  zstyle ':vcs_info:*' stagedstr '%F{green}+%f'
-  zstyle ':vcs_info:*' unstagedstr '%F{green}!%f'
+  zstyle ':vcs_info:*' formats ' on %F{69}%b%f%c%u%m'
+  zstyle ':vcs_info:*' actionformats ' on %F{88}%b%f%c%u%m %F{yellow}(%a)%f'
+  zstyle ':vcs_info:*' stagedstr '%F{69}✚%f'
+  zstyle ':vcs_info:*' unstagedstr '%F{69}✹%f'
 
   # Set vcs_info hooks.
   # NOTE: Prior to Zsh v4.3.12, there are no static hooks, no vcs_info_hookadd
   #       function, and no 'no-vcs' hook.
   zstyle ':vcs_info:*+start-up:*' hooks set_novcs_prompt_symbol
-  local -x _gittrackdiff
+  # local -x _gittrackdiff
   zstyle ':vcs_info:git*+set-message:*' hooks set_vcs_prompt_symbol git_precmd
   zstyle ':vcs_info:*+set-message:*' hooks set_vcs_prompt_symbol
 
+  # Set python-info parameters.
+  zstyle ':prezto:module:python:info:virtualenv' format ' in %F{9}%v%f Python env'
+
   # Define prompts.
   PROMPT='%(?..%F{red}%B-> [%?]%b%f
-)%F{magenta}%n%f@%F{yellow}%m%f|%F{green}${_prompt_tsiriee_pwd}%f${vcs_info_msg_0_}
-%F{blue}${_prompt_tsiriee_symbol}%f '
-  RPROMPT='${_gittrackdiff}${editor_info[keymap]}'
+)%F{magenta}%n%f@%F{yellow}%m%f|%F{green}${_prompt_tsiriee_pwd}%f${vcs_info_msg_0_}${python_info[virtualenv]}
+${(P)${editor_info[keymap]}:-${editor_info[keymap]}} '
+  RPROMPT='${_gittrackdiff}'
   SPROMPT='zsh: correct %F{magenta}%R%f to %F{green}%r%f [nyae]? '
 }
 
