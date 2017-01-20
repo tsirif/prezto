@@ -44,7 +44,7 @@ export PATH=/home/tsirif/.gem/ruby/2.3.0/bin:$PATH
 # Intel
 workwith_intel() {
   emulate sh -c 'source /home/intel/bin/compilervars.sh intel64'
-  export LD_RUN_PATH=/home/intel/compilers_and_libraries_2016/linux/mkl/lib/intel64/:/home/intel/compilers_and_libraries_2016/linux/lib/intel64:$LD_RUN_PATH
+  export LD_RUN_PATH=/home/intel/compilers_and_libraries/linux/mkl/lib/intel64/:/home/intel/compilers_and_libraries/linux/lib/intel64:$LD_RUN_PATH
 }
 
 # workwith_intel
